@@ -11,6 +11,8 @@ public class Block {
     private Block firstFindNeighborBlock;
     private Block lastFindNeighborBlock;
 
+    private ArrayList<CNode> cNodes = new ArrayList<CNode>();
+
     private boolean isolatedNode;
     private boolean isLeadingBlock;
 
@@ -35,6 +37,14 @@ public class Block {
         this.isolatedNode = false;
         this.firstFindNeighborBlock = firstBlock.getFirstFindNeighborBlock();
         this.lastFindNeighborBlock = lastBlock.getLastFindNeighborBlock();
+        this.isLeadingBlock = firstBlock.isLeadingBlock() || lastBlock.isLeadingBlock;
+        firstBlock.getcNodes().addAll(lastBlock.getcNodes());
+        this.cNodes = firstBlock.getcNodes();
+    }
+
+    public void addCNode(CNode cNode){
+        cNodes.add(cNode);
+        isLeadingBlock = isLeadingBlock || cNode.isLeader();
     }
 
     @Override
@@ -43,7 +53,10 @@ public class Block {
                 "startIndex=" + startIndex +
                 ", stopIndex=" + stopIndex +
                 ", size=" + size +
-                ", interDistance=" + interDistance +
+//                ", interDistance=" + interDistance +
+//                ", firstFindNeighborBlock=" + firstFindNeighborBlock +
+//                ", lastFindNeighborBlock=" + lastFindNeighborBlock +
+//                ", cNodes=" + cNodes +
                 ", isolatedNode=" + isolatedNode +
                 ", isLeadingBlock=" + isLeadingBlock +
                 '}';
@@ -111,5 +124,13 @@ public class Block {
 
     public void setLeadingBlock(boolean leadingBlock) {
         isLeadingBlock = leadingBlock;
+    }
+
+    public ArrayList<CNode> getcNodes() {
+        return cNodes;
+    }
+
+    public void setcNodes(ArrayList<CNode> cNodes) {
+        this.cNodes = cNodes;
     }
 }

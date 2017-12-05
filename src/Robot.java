@@ -1,6 +1,7 @@
 import jbotsim.Message;
 import jbotsim.Node;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class Robot extends Node {
     public void onPreClock() {  // LOOK
         configration = new Configration(vision, position);
         this.inFirstStep = configration.isInFirstStep();
+//        System.out.println(configration);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class Robot extends Node {
         System.out.println(getID() + "  -Compute");
         if(inFirstStep) { //Set up phase
             setUp();
-            System.out.println(configration.getMySigmaNegative());
+//            System.out.println(configration.getMySigmaNegative());
         }
     }
     @Override
@@ -92,16 +94,55 @@ public class Robot extends Node {
         configration.calIsIsolated();
 
         configration.calBlocks();
-        if(configration.isHasIsolate()) {
+//        for (Block b :
+//                configration.getBlocks()) {
+//            System.out.println(b);
+//        }
+        System.out.println(getID() + " isHasIsolated - " + configration.calHasIsolated());
+        System.out.println(getID() + " vision - " + configration.getMySigmaPositive());
+        if(configration.calHasIsolated()) {
             // Type A
             setUpPhaseTypeA();
         } else {
+            System.out.println("Type B");
+            System.out.println(configration.getBlocks());
+            if (configration.calHasNonleadingBlock()){
+                // Type B
+                setUpPhaseTypeB();
+            } else {
+
+            }
 
         }
 
     }
 
-    public void setUpPhaseTypeA() {
+    private void setUpPhaseTypeB(){
+        if(configration.calAllBlocksInSameSize()){
+            typeBI();
+        } else {
+            typeBII();
+        }
+    }
+
+    private void typeBICaseI(){}
+
+    private void typeBICaseII(){}
+
+    // prior
+    private void typeBII(){
+        System.out.println("++++++++++++++++++");
+        System.out.println("isPlayer in BII: " + configration.calIsPlayerForTypeBII());
+        if(configration.calIsPlayerForTypeBII()){
+            isPlayer = true;
+            target = configration.getTarget();
+        }
+    }
+
+    private void typeBI(){}
+
+    private void setUpPhaseTypeA() {
+        System.out.println(getID() + " isolated - " + configration.isolated());
         if(configration.isolated()) {
             configration.calMaxBlockNearIsolated();
             configration.calIsPlayerInTypeA();
@@ -109,6 +150,8 @@ public class Robot extends Node {
             target = configration.getTarget();
         }
     }
+
+
 
     public void setPostion(int position){
         this.position = position;

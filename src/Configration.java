@@ -15,22 +15,30 @@ public class Configration {
 
     private String mySigmaPositive;
     private String mySigmaNegative;
+    private String leadingView;
     private char[] chList;
     private int chListSize;
+
+    private boolean isSymmetric;
+    private boolean isLeader = false;
+    private boolean isPlayer = false;
+
 
     private List<Node> vision;
     private ArrayList<String> visionList = new ArrayList<String>();
     private ArrayList<Block> blocks = new ArrayList<Block>();
+
+    // Just a try a new class
+
+    private ArrayList<CNode> cNodes = new ArrayList<CNode>();
 
     private int interDistance;
     private int maxSizeOfBlockNearAIsolated;
     private int minDistanceBetweenBlockAndIsolated;
     private int target;
 
-    // TODO: 2017/12/3
-    // private boolean isSymmetric
-    private boolean isLeader = false;
-    private boolean isPlayer = false;
+    // TODO: 2017/12/4
+
 
 
 
@@ -50,18 +58,29 @@ public class Configration {
         mySigmaNegative = sigmaNegative;
         mySigmaPositive = sigmaPositive;
         for(int i = 0; i < sigmaNegative.length(); i++) {
-            visionList.add(Algorithm.leftMove(sigmaNegative, i));
-            visionList.add(Algorithm.leftMove(sigmaPositive, i));
+            String s1 = Algorithm.leftMove(sigmaPositive, i);
+            String s2 = Algorithm.leftMove(sigmaNegative, sigmaNegative.length() - i);
+            visionList.add(s1);
+            visionList.add(s2);
+            cNodes.add(new CNode(s1, s2));
         }
 
-        Collections.sort(visionList);
+        ArrayList<String> tempVisionList;
 
-        for (String s :
-                visionList) {
-            System.out.println(s);
-        }
+        tempVisionList = (ArrayList<String>)visionList.clone();
 
-        System.out.println();
+        Collections.sort(tempVisionList);
+//        System.out.println(tempVisionList);
+
+//        for (String s :
+//                visionList) {
+//            System.out.println(s);
+//        }
+//
+//        System.out.println();
+
+        leadingView = tempVisionList.get(tempVisionList.size() - 1);
+        isSymmetric = (leadingView.equals(tempVisionList.get(tempVisionList.size() - 2)));
 
         chList = getMySigmaPositive().toCharArray();
         chListSize = chList.length;
@@ -104,6 +123,11 @@ public class Configration {
                 if (chList[i] == '0') {
                     stopIndex = i - j;
                     Block block = new Block(interDistance, startIndex, stopIndex);
+                    for(int f = startIndex; f < stopIndex + 1;f++){
+                        CNode cNode = cNodes.get(f);
+                        cNode.calIsLeader(leadingView);
+                        block.addCNode(cNode);
+                    }
                     if(block.isolatedNode() && tempBlock != null){
                         this.hasIsolate = block.isolatedNode();
                     }
@@ -128,6 +152,11 @@ public class Configration {
         if(i >= chListSize && chList[i-j] == '1') {
             stopIndex = i - j;
             Block block = new Block(interDistance, startIndex, stopIndex);
+            for(int f = startIndex; f < stopIndex + 1;f++){
+                CNode cNode = cNodes.get(f);
+                cNode.calIsLeader(leadingView);
+                block.addCNode(cNode);
+            }
             if(block.isolatedNode()){
                 this.hasIsolate = block.isolatedNode();
             }
@@ -228,6 +257,80 @@ public class Configration {
 
     }
 
+    public boolean calHasNonleadingBlock(){
+        for(Block b : blocks){
+            if(!b.isLeadingBlock()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean calAllBlocksInSameSize(){
+        for(int i = 0; i < blocks.size()-1 ;i++) {
+            if(blocks.get(i).getSize() != blocks.get(i+1).getSize()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean calIsPlayerForTypeBII() {
+        int minSizeOfBlock = chListSize;
+        int maxSizeofBlcokNearS = 0;
+        for(Block b : blocks){
+            minSizeOfBlock = Math.min(minSizeOfBlock, b.getSize());
+        }
+
+        for (Block b : blocks){
+            maxSizeofBlcokNearS = Math.max(maxSizeofBlcokNearS, Math.max(b.getFirstFindNeighborBlock().getSize(), b.getLastFindNeighborBlock().getSize()));
+        }
+
+        int minDistanceBetweenSAnds = chListSize;
+        for(Block block : blocks) {
+            if(block.getSize() == minSizeOfBlock){
+                System.out.println("<><><><><>");
+                int distanceBetweenFrontBlock = block.getFirstFindNeighborBlock().getSize() == maxSizeofBlcokNearS ? (chListSize + block.getStartIndex() - block.getFirstFindNeighborBlock().getStopIndex()) % chListSize :chListSize;
+                int distanceBetweenBackBlock = block.getLastFindNeighborBlock().getSize() == maxSizeofBlcokNearS ? (chListSize + block.getLastFindNeighborBlock().getStartIndex() - block.getStopIndex()) % chListSize :chListSize;
+                minDistanceBetweenSAnds = Math.min(minDistanceBetweenSAnds, Math.min(Math.abs(distanceBetweenBackBlock), Math.abs(distanceBetweenFrontBlock)));
+            }
+        }
+
+        System.out.println("minSizeOfBlock: " + minSizeOfBlock);
+        System.out.println("maxSizeofBlcokNearS: " + maxSizeofBlcokNearS);
+        System.out.println("minDistanceBetweenSAnds: " + minDistanceBetweenSAnds);
+
+        Block thisBlock = blocks.get(0);
+        System.out.println(thisBlock.getStartIndex() + " && " + thisBlock.getFirstFindNeighborBlock().getSize() + " && " + (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()));
+        System.out.println((thisBlock.getStartIndex() == '0' && thisBlock.getFirstFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()) == minDistanceBetweenSAnds));
+        System.out.println(thisBlock.getStopIndex() + " && " + thisBlock.getLastFindNeighborBlock().getSize() + "&&" + (thisBlock.getLastFindNeighborBlock().getStartIndex() - thisBlock.getStopIndex()));
+        System.out.println(thisBlock.getStopIndex() == '0' && thisBlock.getLastFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (thisBlock.getLastFindNeighborBlock().getStartIndex() - thisBlock.getStopIndex()) == minDistanceBetweenSAnds);
+        if(thisBlock.getSize() == minSizeOfBlock){
+            if(thisBlock.getStartIndex() == 0 && thisBlock.getFirstFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()) == minDistanceBetweenSAnds){
+                this.target = -1;
+                return true;
+            }
+            if(thisBlock.getStopIndex() == 0 && thisBlock.getLastFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (thisBlock.getLastFindNeighborBlock().getStartIndex() - thisBlock.getStopIndex()) == minDistanceBetweenSAnds){
+                this.target = 1;
+                return true;
+            }
+        }
+
+
+
+        return false;
+    }
+
+    public boolean calHasIsolated(){
+        for(Block b : blocks) {
+            if (b.isolatedNode()){
+                this.hasIsolate = true;
+                return true;
+            }
+        }
+        this.hasIsolate = false;
+        return false;
+    }
 
     public boolean isHasIsolate() {
         return hasIsolate;
@@ -319,5 +422,39 @@ public class Configration {
 
     public void setTarget(int target) {
         this.target = target;
+    }
+
+    public boolean isSymmetric() {
+        return isSymmetric;
+    }
+
+    public void setSymmetric(boolean symmetric) {
+        isSymmetric = symmetric;
+    }
+
+    @Override
+    public String toString() {
+        return "Configration{" +
+                "hasIsolate=" + hasIsolate +
+                ", isIsolated=" + isIsolated +
+                ", numberOfLeader=" + numberOfLeader +
+                ", inFirstStep=" + inFirstStep +
+                ", mySigmaPositive='" + mySigmaPositive + '\'' +
+                ", mySigmaNegative='" + mySigmaNegative + '\'' +
+                ", leadingView='" + leadingView + '\'' +
+                ", chList=" + Arrays.toString(chList) +
+                ", chListSize=" + chListSize +
+                ", isSymmetric=" + isSymmetric +
+                ", isLeader=" + isLeader +
+                ", isPlayer=" + isPlayer +
+                ", vision=" + vision +
+                ", visionList=" + visionList +
+                ", blocks=" + blocks +
+                ", cNodes=" + cNodes +
+                ", interDistance=" + interDistance +
+                ", maxSizeOfBlockNearAIsolated=" + maxSizeOfBlockNearAIsolated +
+                ", minDistanceBetweenBlockAndIsolated=" + minDistanceBetweenBlockAndIsolated +
+                ", target=" + target +
+                '}';
     }
 }
