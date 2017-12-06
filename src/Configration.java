@@ -18,6 +18,7 @@ public class Configration {
     private String leadingView;
     private char[] chList;
     private int chListSize;
+    private int numberOfRobots;
 
     private boolean isSymmetric;
     private boolean isLeader = false;
@@ -36,6 +37,7 @@ public class Configration {
     private int maxSizeOfBlockNearAIsolated;
     private int minDistanceBetweenBlockAndIsolated;
     private int target;
+    private int sizeOfTheBlocks;
 
     // TODO: 2017/12/4
 
@@ -79,11 +81,23 @@ public class Configration {
 //
 //        System.out.println();
 
+
         leadingView = tempVisionList.get(tempVisionList.size() - 1);
         isSymmetric = (leadingView.equals(tempVisionList.get(tempVisionList.size() - 2)));
 
         chList = getMySigmaPositive().toCharArray();
         chListSize = chList.length;
+
+        int c = 0;
+        for (int i = 0; i < chListSize; i++){
+            if(chList[i] == '1'){
+                c = c + 1;
+            } else if(chList[i] == '2'){
+                c = c + 2;
+            }
+        }
+
+        numberOfRobots = c;
     }
 
     public void calInterDistance(){
@@ -267,12 +281,23 @@ public class Configration {
     }
 
     public boolean calAllBlocksInSameSize(){
-        for(int i = 0; i < blocks.size()-1 ;i++) {
+        for(int i = 0; i < (blocks.size() - 1); i++) {
             if(blocks.get(i).getSize() != blocks.get(i+1).getSize()){
                 return false;
             }
         }
+        this.sizeOfTheBlocks = blocks.get(0).getSize();
         return true;
+    }
+
+    public boolean calIsThereOnlyOneLeader(){
+        int count = 0;
+        for(Block b : blocks){
+            if(b.isLeadingBlock()) {
+               count++;
+            }
+        }
+        return count == 1;
     }
 
     public boolean calIsPlayerForTypeBII() {
@@ -296,15 +321,15 @@ public class Configration {
             }
         }
 
-        System.out.println("minSizeOfBlock: " + minSizeOfBlock);
-        System.out.println("maxSizeofBlcokNearS: " + maxSizeofBlcokNearS);
-        System.out.println("minDistanceBetweenSAnds: " + minDistanceBetweenSAnds);
+//        System.out.println("minSizeOfBlock: " + minSizeOfBlock);
+//        System.out.println("maxSizeofBlcokNearS: " + maxSizeofBlcokNearS);
+//        System.out.println("minDistanceBetweenSAnds: " + minDistanceBetweenSAnds);
 
         Block thisBlock = blocks.get(0);
-        System.out.println(thisBlock.getStartIndex() + " && " + thisBlock.getFirstFindNeighborBlock().getSize() + " && " + (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()));
-        System.out.println((thisBlock.getStartIndex() == '0' && thisBlock.getFirstFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()) == minDistanceBetweenSAnds));
-        System.out.println(thisBlock.getStopIndex() + " && " + thisBlock.getLastFindNeighborBlock().getSize() + "&&" + (thisBlock.getLastFindNeighborBlock().getStartIndex() - thisBlock.getStopIndex()));
-        System.out.println(thisBlock.getStopIndex() == '0' && thisBlock.getLastFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (thisBlock.getLastFindNeighborBlock().getStartIndex() - thisBlock.getStopIndex()) == minDistanceBetweenSAnds);
+//        System.out.println(thisBlock.getStartIndex() + " && " + thisBlock.getFirstFindNeighborBlock().getSize() + " && " + (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()));
+//        System.out.println((thisBlock.getStartIndex() == '0' && thisBlock.getFirstFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()) == minDistanceBetweenSAnds));
+//        System.out.println(thisBlock.getStopIndex() + " && " + thisBlock.getLastFindNeighborBlock().getSize() + "&&" + (thisBlock.getLastFindNeighborBlock().getStartIndex() - thisBlock.getStopIndex()));
+//        System.out.println(thisBlock.getStopIndex() == '0' && thisBlock.getLastFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (thisBlock.getLastFindNeighborBlock().getStartIndex() - thisBlock.getStopIndex()) == minDistanceBetweenSAnds);
         if(thisBlock.getSize() == minSizeOfBlock){
             if(thisBlock.getStartIndex() == 0 && thisBlock.getFirstFindNeighborBlock().getSize() == maxSizeofBlcokNearS && (chListSize - thisBlock.getFirstFindNeighborBlock().getStopIndex()) == minDistanceBetweenSAnds){
                 this.target = -1;
@@ -319,6 +344,54 @@ public class Configration {
 
 
         return false;
+    }
+
+    public boolean calIsPlayerForTypeBICaseZ(){
+        Block thisBlock = blocks.get(0);
+        if(this.mySigmaNegative.equals(leadingView) || this.mySigmaPositive.equals(leadingView)){
+            if(thisBlock.getStartIndex() == 0){
+                this.target = -1;
+                return true;
+            }
+            if(thisBlock.getStopIndex() == 0){
+                this.target = 1;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean calIsPlayerForTypeBICaseI(){
+        // Same size which is 2 with two leaders
+        Block thisBlock = blocks.get(0);
+        String mySmallestView = getMySmallestView();
+
+        if(mySmallestView.equals(thisBlock.getSmallestView())) {
+
+            int numberOfBlock = (int)Math.ceil((double)numberOfRobots/(double)2);
+            System.out.println("numberOfBlock " + numberOfRobots);
+            for(int i = 4; i < numberOfBlock - 3; i++) {
+                System.out.println(mySmallestView);
+                System.out.println(blocks.get(i).getSmallestView());
+                if (blocks.get(i).getSmallestView().equals(mySmallestView)){
+//                    System.out.println(mySmallestView);
+//                    System.out.println(thisBlock.getSmallestView());
+                    if(thisBlock.getStartIndex() == 0){
+                        this.target = -1;
+                        return true;
+                    }
+                    if(thisBlock.getStopIndex() == 0){
+                        this.target = 1;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public String getMySmallestView() {
+        return (mySigmaNegative.compareTo(mySigmaPositive) < 0)? mySigmaNegative:mySigmaPositive;
     }
 
     public boolean calHasIsolated(){
@@ -408,10 +481,6 @@ public class Configration {
         return visionList;
     }
 
-    public void setVisionList(ArrayList<String> visionList) {
-        this.visionList = visionList;
-    }
-
     public ArrayList<Block> getBlocks() {
         return blocks;
     }
@@ -430,6 +499,14 @@ public class Configration {
 
     public void setSymmetric(boolean symmetric) {
         isSymmetric = symmetric;
+    }
+
+    public int getSizeOfTheBlocks() {
+        return sizeOfTheBlocks;
+    }
+
+    public void setSizeOfTheBlocks(int sizeOfTheBlocks) {
+        this.sizeOfTheBlocks = sizeOfTheBlocks;
     }
 
     @Override

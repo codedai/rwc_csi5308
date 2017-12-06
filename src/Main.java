@@ -55,6 +55,27 @@ public class Main {
 
     }
 
+    public static void iniRobotPositionInBlockOfSizeTwo(Topology topology, int robotSize){
+        List<Node> ringNodes = topology.getNodes();
+        int nodeSize = ringNodes.size();
+        int count = 0;
+        for(int i = 0 ; i < (int)robotSize/2; i++){
+            Node tempNode = ringNodes.get(count);
+            double xPosition = tempNode.getX();
+            double yPosition = tempNode.getY();
+            Robot robot = new Robot(ringNodes, tempNode.getID());
+            topology.addNode(xPosition, yPosition, robot);
+            count = count + 1;
+            tempNode = ringNodes.get(count);
+            xPosition = tempNode.getX();
+            yPosition = tempNode.getY();
+            robot = new Robot(ringNodes, tempNode.getID());
+            topology.addNode(xPosition, yPosition, robot);
+
+            count = count + 2;
+        }
+    }
+
     public static void main(String[] args) {
 
         Topology tpg = new Topology();
@@ -64,8 +85,8 @@ public class Main {
         generateRing(tpg, nodeSize, false);
         tpg.setDefaultNodeModel(Robot.class);
         int robotSize = 17;
-        initRobotPostion(tpg, robotSize);
-
+//        initRobotPostion(tpg, robotSize);
+        iniRobotPositionInBlockOfSizeTwo(tpg, 18);
         new JViewer(tpg);
 
     }

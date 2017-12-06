@@ -34,7 +34,7 @@ public class RingNode extends Node implements MessageListener{
 
     @Override
     public void onMessage(Message msg) {
-        System.out.println(6);
+//        System.out.println(6);
         Object msgContent = msg.getContent();
         if(msgContent == Define.VISITING) {
             setVisting();

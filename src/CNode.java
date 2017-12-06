@@ -13,6 +13,10 @@ public class CNode {
         this.pointVisonII = pointVisonII;
     }
 
+    public String getSmallestView(){
+        return (pointVisonI.compareTo(pointVisonII)) < 0 ? pointVisonI : pointVisonII;
+    }
+
     public String getPointVisonI() {
         return pointVisonI;
     }

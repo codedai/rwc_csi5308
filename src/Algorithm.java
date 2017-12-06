@@ -39,6 +39,13 @@ public class Algorithm {
         return String.valueOf(ch);
     }
 
+    public static String generateRepeatingString(char c, Integer n) {
+        StringBuilder b = new StringBuilder();
+        for (Integer x = 0; x <n; x++)
+            b.append(c);
+        return b.toString();
+    }
+
     /*
     * --------------------------------------------------------------------------------
     * Set up phase
@@ -46,12 +53,6 @@ public class Algorithm {
     */
 
 
-    public static void setUp(Robot robot){
-
-
-        System.out.println();
-
-    }
 
 
 }

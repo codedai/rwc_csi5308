@@ -98,7 +98,7 @@ public class Robot extends Node {
 //                configration.getBlocks()) {
 //            System.out.println(b);
 //        }
-        System.out.println(getID() + " isHasIsolated - " + configration.calHasIsolated());
+//        System.out.println(getID() + " isHasIsolated - " + configration.calHasIsolated());
         System.out.println(getID() + " vision - " + configration.getMySigmaPositive());
         if(configration.calHasIsolated()) {
             // Type A
@@ -119,27 +119,52 @@ public class Robot extends Node {
 
     private void setUpPhaseTypeB(){
         if(configration.calAllBlocksInSameSize()){
+            System.out.println("Samesize");
             typeBI();
         } else {
             typeBII();
         }
     }
 
-    private void typeBICaseI(){}
+    private void typeBICaseI(){
+        if(configration.calIsPlayerForTypeBICaseI()){
+            isPlayer = true;
+            target = configration.getTarget();
+        }
+    }
 
     private void typeBICaseII(){}
 
     // prior
     private void typeBII(){
-        System.out.println("++++++++++++++++++");
-        System.out.println("isPlayer in BII: " + configration.calIsPlayerForTypeBII());
+//        System.out.println("++++++++++++++++++");
+//        System.out.println("isPlayer in BII: " + configration.calIsPlayerForTypeBII());
         if(configration.calIsPlayerForTypeBII()){
             isPlayer = true;
             target = configration.getTarget();
         }
     }
 
-    private void typeBI(){}
+    private void typeBI(){
+
+        if(configration.calIsThereOnlyOneLeader()){
+            System.out.println("Has one ");
+            // Same size with only one leader
+            if(configration.calIsPlayerForTypeBICaseZ()){
+                isPlayer = true;
+                target = configration.getTarget();
+            }
+        }else {
+//            System.out.println("has two");
+            if(configration.getSizeOfTheBlocks() == 2){
+//                System.out.println("has caseI");
+                typeBICaseI();
+            } else {
+                typeBICaseII();
+            }
+        }
+
+    }
 
     private void setUpPhaseTypeA() {
         System.out.println(getID() + " isolated - " + configration.isolated());

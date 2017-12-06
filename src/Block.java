@@ -1,3 +1,6 @@
+
+import com.sun.xml.internal.ws.util.StringUtils;
+
 import java.util.ArrayList;
 
 /**
@@ -8,6 +11,9 @@ public class Block {
     private int stopIndex;
     private int size;
     private int interDistance;
+
+    private String smallestView = null;
+
     private Block firstFindNeighborBlock;
     private Block lastFindNeighborBlock;
 
@@ -38,12 +44,23 @@ public class Block {
         this.firstFindNeighborBlock = firstBlock.getFirstFindNeighborBlock();
         this.lastFindNeighborBlock = lastBlock.getLastFindNeighborBlock();
         this.isLeadingBlock = firstBlock.isLeadingBlock() || lastBlock.isLeadingBlock;
+        this.smallestView = (firstBlock.getSmallestView().compareTo(lastBlock.getSmallestView()) < 0) ? firstBlock.getSmallestView() : lastBlock.getSmallestView();
         firstBlock.getcNodes().addAll(lastBlock.getcNodes());
         this.cNodes = firstBlock.getcNodes();
     }
 
     public void addCNode(CNode cNode){
         cNodes.add(cNode);
+        String s = cNode.getSmallestView();
+        int c = s.length();
+        String test = "1" + Algorithm.generateRepeatingString('0', c-1);
+        if(cNode.getSmallestView().compareTo(test) >= 0){
+            if(smallestView == null){
+                smallestView = cNode.getSmallestView();
+            }else {
+                smallestView = (cNode.getSmallestView().compareTo(smallestView) < 0) ? cNode.getSmallestView() : smallestView;
+            }
+        }
         isLeadingBlock = isLeadingBlock || cNode.isLeader();
     }
 
@@ -132,5 +149,9 @@ public class Block {
 
     public void setcNodes(ArrayList<CNode> cNodes) {
         this.cNodes = cNodes;
+    }
+
+    public String getSmallestView() {
+        return smallestView;
     }
 }
