@@ -25,6 +25,9 @@ public class RingNode extends Node implements MessageListener{
     public void setVisting() {
         setVisited();
         this.numberOfRobots = this.numberOfRobots + 1;
+        if(numberOfRobots == 2){
+            setIcon("./img/tower.png");
+        }
     }
 
     public void setLeft() {
@@ -34,7 +37,7 @@ public class RingNode extends Node implements MessageListener{
 
     @Override
     public void onMessage(Message msg) {
-//        System.out.println(6);
+        System.out.println(6);
         Object msgContent = msg.getContent();
         if(msgContent == Define.VISITING) {
             setVisting();

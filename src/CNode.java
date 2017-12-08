@@ -17,6 +17,10 @@ public class CNode {
         return (pointVisonI.compareTo(pointVisonII)) < 0 ? pointVisonI : pointVisonII;
     }
 
+    public String getBiggestView(){
+        return (pointVisonI.compareTo(pointVisonII)) > 0 ? pointVisonI : pointVisonII;
+    }
+
     public String getPointVisonI() {
         return pointVisonI;
     }
@@ -56,5 +60,13 @@ public class CNode {
 
     public void calIsLeader(String leadingVision) {
         this.isLeader = (pointVisonI.equals(leadingVision) || pointVisonII.equals(leadingVision));
+    }
+
+    @Override
+    public String toString() {
+        return "CNode{" +
+                "pointVisonI='" + pointVisonI + '\'' +
+                ", pointVisonII='" + pointVisonII + '\'' +
+                '}';
     }
 }

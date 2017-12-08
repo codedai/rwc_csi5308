@@ -6,5 +6,5 @@ public class Define {
     public static final String TOWERCREATION = "Tower creation";
     public static final String EXPLORATION = "Exploration";
     public static final String VISITING = "Visiting";
-    public static final String LEAVING = "LEAVING";
+    public static final String LEAVING = "Leaving";
 }

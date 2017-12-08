@@ -70,12 +70,13 @@ public class Block {
                 "startIndex=" + startIndex +
                 ", stopIndex=" + stopIndex +
                 ", size=" + size +
-//                ", interDistance=" + interDistance +
+                ", interDistance=" + interDistance +
+                ", smallestView='" + smallestView + '\'' +
 //                ", firstFindNeighborBlock=" + firstFindNeighborBlock +
 //                ", lastFindNeighborBlock=" + lastFindNeighborBlock +
-//                ", cNodes=" + cNodes +
-                ", isolatedNode=" + isolatedNode +
-                ", isLeadingBlock=" + isLeadingBlock +
+                ", cNodes=" + cNodes +
+//                ", isolatedNode=" + isolatedNode +
+//                ", isLeadingBlock=" + isLeadingBlock +
                 '}';
     }
 

@@ -1,8 +1,5 @@
 import jbotsim.Message;
 import jbotsim.Node;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,6 +42,7 @@ public class Robot extends Node {
         configration = new Configration(vision, position);
         this.inFirstStep = configration.isInFirstStep();
 //        System.out.println(configration);
+        System.out.println(getID() + " vision - " + configration.getMySigmaPositive());
     }
 
     @Override
@@ -53,6 +51,8 @@ public class Robot extends Node {
         if(inFirstStep) { //Set up phase
             setUp();
 //            System.out.println(configration.getMySigmaNegative());
+        }else {
+            Exploration();
         }
     }
     @Override
@@ -79,8 +79,11 @@ public class Robot extends Node {
             onNode = this.getSensedNodes();
             for(int i = 0; i < onNode.size(); i++){
 //                System.out.println(123);
-                RingNode n = (RingNode)onNode.get(i);
-                n.setVisting();
+                if(onNode.get(i).getClass().toString().equals("class RingNode")){
+//                System.out.println(onNode.get(i).getClass().toString().equals("class RingNode") + "()()()");
+                    RingNode n = (RingNode)onNode.get(i);
+                    n.setVisting();
+                }
             }
 
             this.position = (vision.size() +temp) % vision.size();
@@ -89,10 +92,20 @@ public class Robot extends Node {
 
     }
 
+    private void Exploration(){
+        if(configration.calIsPlayerForExploration()){
+            isPlayer = true;
+            target = configration.getTarget();
+        }
+    }
+
+
     private void setUp() {
+
+        // The logic of the code have some problem
+
         configration.calInterDistance();
         configration.calIsIsolated();
-
         configration.calBlocks();
 //        for (Block b :
 //                configration.getBlocks()) {
@@ -110,16 +123,37 @@ public class Robot extends Node {
                 // Type B
                 setUpPhaseTypeB();
             } else {
-
+                if(configration.getInterDistance() > 1){
+                    // Type C
+                    setUpPhaseTypeC();
+                }else {
+                    System.out.println("Set up is done, move to Tower-Creation Phase");
+                    TowerCreation();
+                }
             }
 
         }
 
     }
 
+    private void TowerCreation(){
+        System.out.println("<><><><><<><><><><><<>>");
+        if(configration.calIsPlayerForTowerCreation()){
+            isPlayer = true;
+            target = configration.getTarget();
+        }
+    }
+
+    private void setUpPhaseTypeC() {
+        if(configration.calIsPlayerForTypeC()){
+            isPlayer = true;
+            target = configration.getTarget();
+        }
+    }
+
     private void setUpPhaseTypeB(){
         if(configration.calAllBlocksInSameSize()){
-            System.out.println("Samesize");
+            System.out.println("Same size");
             typeBI();
         } else {
             typeBII();
@@ -133,7 +167,13 @@ public class Robot extends Node {
         }
     }
 
-    private void typeBICaseII(){}
+    private void typeBICaseII() {
+        if(configration.calIsPlayerForTypeBICaseII()){
+            isPlayer = true;
+            target = configration.getTarget();
+        }
+    }
+
 
     // prior
     private void typeBII(){

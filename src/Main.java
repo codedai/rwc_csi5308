@@ -57,7 +57,6 @@ public class Main {
 
     public static void iniRobotPositionInBlockOfSizeTwo(Topology topology, int robotSize){
         List<Node> ringNodes = topology.getNodes();
-        int nodeSize = ringNodes.size();
         int count = 0;
         for(int i = 0 ; i < (int)robotSize/2; i++){
             Node tempNode = ringNodes.get(count);
@@ -76,17 +75,60 @@ public class Main {
         }
     }
 
+
+    public static void iniRobotPositionInBlockOfSizeThree(Topology topology, int robotSize){
+        List<Node> ringNodes = topology.getNodes();
+        int count = 0;
+        for(int i = 0 ; i < (int)robotSize/3; i++){
+            Node tempNode = ringNodes.get(count);
+            double xPosition = tempNode.getX();
+            double yPosition = tempNode.getY();
+            Robot robot = new Robot(ringNodes, tempNode.getID());
+            topology.addNode(xPosition, yPosition, robot);
+            count = count + 1;
+            tempNode = ringNodes.get(count);
+            xPosition = tempNode.getX();
+            yPosition = tempNode.getY();
+            robot = new Robot(ringNodes, tempNode.getID());
+            topology.addNode(xPosition, yPosition, robot);
+            count = count + 1;
+            tempNode = ringNodes.get(count);
+            xPosition = tempNode.getX();
+            yPosition = tempNode.getY();
+            robot = new Robot(ringNodes, tempNode.getID());
+            topology.addNode(xPosition, yPosition, robot);
+            count = count + 2;
+        }
+    }
+
+    public static void iniRobotPositionForTypeC(Topology topology, int robotSize){
+        List<Node> ringNodes = topology.getNodes();
+        int nodeSize = ringNodes.size();
+        int count = 0;
+        for(int i = 0 ; i < (int)robotSize; i++){
+            Node tempNode = ringNodes.get(count);
+            double xPosition = tempNode.getX();
+            double yPosition = tempNode.getY();
+            Robot robot = new Robot(ringNodes, tempNode.getID());
+            topology.addNode(xPosition, yPosition, robot);
+            count = count + 2;
+        }
+    }
+
+
     public static void main(String[] args) {
 
         Topology tpg = new Topology();
         tpg.setClockSpeed(500);
         tpg.setDefaultNodeModel(RingNode.class);
-        int nodeSize = 49;
+        int nodeSize = 31;
         generateRing(tpg, nodeSize, false);
         tpg.setDefaultNodeModel(Robot.class);
-        int robotSize = 17;
-//        initRobotPostion(tpg, robotSize);
-        iniRobotPositionInBlockOfSizeTwo(tpg, 18);
+        int robotSize = 30;
+        initRobotPostion(tpg, 18);
+//        iniRobotPositionInBlockOfSizeTwo(tpg, robotSize);
+//        iniRobotPositionInBlockOfSizeThree(tpg, robotSize);
+//        iniRobotPositionForTypeC(tpg, robotSize);
         new JViewer(tpg);
 
     }
