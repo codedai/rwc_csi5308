@@ -119,13 +119,13 @@ public class Main {
     public static void main(String[] args) {
 
         Topology tpg = new Topology();
-        tpg.setClockSpeed(500);
+        tpg.setClockSpeed(100);
         tpg.setDefaultNodeModel(RingNode.class);
-        int nodeSize = 31;
+        int nodeSize = 30;
         generateRing(tpg, nodeSize, false);
         tpg.setDefaultNodeModel(Robot.class);
-        int robotSize = 30;
-        initRobotPostion(tpg, 18);
+        int robotSize = 29;
+        initRobotPostion(tpg, 19);
 //        iniRobotPositionInBlockOfSizeTwo(tpg, robotSize);
 //        iniRobotPositionInBlockOfSizeThree(tpg, robotSize);
 //        iniRobotPositionForTypeC(tpg, robotSize);

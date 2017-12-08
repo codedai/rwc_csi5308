@@ -74,7 +74,7 @@ public class Block {
                 ", smallestView='" + smallestView + '\'' +
 //                ", firstFindNeighborBlock=" + firstFindNeighborBlock +
 //                ", lastFindNeighborBlock=" + lastFindNeighborBlock +
-                ", cNodes=" + cNodes +
+//                ", cNodes=" + cNodes +
 //                ", isolatedNode=" + isolatedNode +
 //                ", isLeadingBlock=" + isLeadingBlock +
                 '}';

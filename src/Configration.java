@@ -506,61 +506,67 @@ public class Configration {
     }
 
     public boolean calIsPlayerForExploration() {
-        if(chList[1] == '0' && chList[chListSize-1] == '0'){
-            if(numberOfRobots%2 == 1){
-                int count = 0;
-                for(int i = 1; i < chListSize; i++){
-                    if(chList[i] == '1'){
-                        count++;
-                    } else if (chList[i] != '1' && count != 0){
-                        break;
+        if(chList[0] != '2'){
+            if(chList[1] == '0' && chList[chListSize-1] == '0'){
+                if(numberOfRobots%2 == 1){
+                    int count = 0;
+                    for(int i = 1; i < chListSize; i++){
+                        if(chList[i] == '1'){
+                            count++;
+                        } else if (chList[i] != '1' && count != 0){
+                            break;
+                        }
                     }
-                }
-                if(count == (numberOfRobots-3) / 2) {
-                    target = -1;
-                }else {
-                    target = 1;
-                }
-            } else {
-                int count = 0;
-                for(int i = 1; i < chListSize; i++){
-                    if(chList[i] == '1'){
-                        count++;
-                    } else if (chList[i] != '1' && count != 0){
-                        break;
-                    }
-                }
-                if(count == 1) {
-                    target = -1;
-                }else {
-                    target = 1;
-                }
-            }
-            return true;
-        } else {
-            if(numberOfRobots % 2 == 1) {
-                int a = (numberOfLeader-3) / 2;
-                String test =  Algorithm.generateRepeatingString('1', a) + "2" + "0" + Algorithm.generateRepeatingString('1', a+1);
-                if(getMyBiggestView().equals(test)){
-                    if(mySigmaNegative.equals(test)){
+                    if(count == (numberOfRobots-3) / 2) {
                         target = 1;
                     }else {
                         target = -1;
                     }
-                    return true;
-                }
-            } else {
-                if((chList[1] == '0' || chList[chListSize-1] == '0') && (chList[0] != '2') && !(chList[2] == '2' || chList[chListSize-2] == '2')){
-
-                    if(chList[1] == '0'){
+                } else {
+                    int count = 0;
+                    for(int i = 1; i < chListSize; i++){
+                        if(chList[i] == '1'){
+                            count++;
+                        } else if (chList[i] != '1' && count != 0){
+                            break;
+                        }
+                    }
+                    if(count == 1) {
                         target = 1;
                     }else {
                         target = -1;
                     }
-                    return true;
                 }
-            }
+                return true;
+            } else {
+                if(numberOfRobots % 2 == 1) {
+                    int a = (numberOfRobots-3) / 2;
+                    String test =  Algorithm.generateRepeatingString('1', a) + "2" + "0" + Algorithm.generateRepeatingString('1', a+1) + Algorithm.generateRepeatingString('0', chListSize-numberOfRobots);
+                    System.out.println("text " + test);
+                    if(getMyBiggestView().equals(test)){
+                        if(mySigmaNegative.equals(test)){
+                            target = 1;
+                        }else {
+                            target = -1;
+                        }
+                        return true;
+                    }
+                } else {
+                    if(chList[1] == '1' && chList[2] == '0' || chList[chListSize-1] == '1' && chList[chListSize-2] == '0' ){
+                        return false;
+                    }
+                    if((chList[1] == '0' || chList[chListSize-1] == '0') && (chList[0] != '2') && !(chList[2] == '2' || chList[chListSize-2] == '2')){
 
+                        if(chList[1] == '0'){
+                            target = 1;
+                        }else {
+                            target = -1;
+                        }
+                        return true;
+                    }
+                }
+
+            }
         }
         return false;
     }

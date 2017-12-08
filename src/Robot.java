@@ -12,6 +12,7 @@ public class Robot extends Node {
     private int target;
     private boolean inFirstStep = true;
     private boolean isPlayer = false;
+    private boolean stopFlag = false;
     private Configration configration;
 
     public Robot() {
@@ -39,63 +40,70 @@ public class Robot extends Node {
 
     @Override
     public void onPreClock() {  // LOOK
-        configration = new Configration(vision, position);
-        this.inFirstStep = configration.isInFirstStep();
+        if(!stopFlag){
+            configration = new Configration(vision, position);
+            this.inFirstStep = configration.isInFirstStep();
 //        System.out.println(configration);
-        System.out.println(getID() + " vision - " + configration.getMySigmaPositive());
+            System.out.println(getID() + " vision - " + configration.getMySigmaPositive());
+        }
     }
 
     @Override
     public void onClock(){      // COMPUTE
-        System.out.println(getID() + "  -Compute");
-        if(inFirstStep) { //Set up phase
-            setUp();
+        if(!stopFlag){
+            System.out.println(getID() + "  -Compute");
+            if(inFirstStep) { //Set up phase
+                setUp();
 //            System.out.println(configration.getMySigmaNegative());
-        }else {
-            Exploration();
+            }else {
+                Exploration();
+            }
         }
     }
     @Override
     public void onPostClock(){  // MOVE
-        System.out.print("-Move" + "\n");
-        if(isPlayer) {
+        if(!stopFlag) {
+            System.out.print("-Move" + "\n");
+            if(isPlayer) {
 
-            System.out.println(getID() + "  "  + isPlayer);
+                System.out.println(getID() + "  "  + isPlayer);
 
-            int temp = position + target;
+                int temp = position + target;
 
-            Node node = vision.get((vision.size() +temp) % vision.size());
+                Node node = vision.get((vision.size() +temp) % vision.size());
 
-            List<Node> onNode = this.getSensedNodes();
+                List<Node> onNode = this.getSensedNodes();
 
-            for(int i = 0; i < onNode.size(); i++){
+                for(int i = 0; i < onNode.size(); i++){
 //                System.out.println(123);
-                RingNode n = (RingNode)onNode.get(i);
-                n.setLeft();
-            }
-
-            setLocation(node.getX(), node.getY());
-
-            onNode = this.getSensedNodes();
-            for(int i = 0; i < onNode.size(); i++){
-//                System.out.println(123);
-                if(onNode.get(i).getClass().toString().equals("class RingNode")){
-//                System.out.println(onNode.get(i).getClass().toString().equals("class RingNode") + "()()()");
                     RingNode n = (RingNode)onNode.get(i);
-                    n.setVisting();
+                    n.setLeft();
                 }
+
+                setLocation(node.getX(), node.getY());
+
+                onNode = this.getSensedNodes();
+                for(int i = 0; i < onNode.size(); i++){
+//                System.out.println(123);
+                    if(onNode.get(i).getClass().toString().equals("class RingNode")){
+//                System.out.println(onNode.get(i).getClass().toString().equals("class RingNode") + "()()()");
+                        RingNode n = (RingNode)onNode.get(i);
+                        n.setVisting();
+                    }
+                }
+
+                this.position = (vision.size() +temp) % vision.size();
             }
-
-            this.position = (vision.size() +temp) % vision.size();
+            isPlayer = false;
         }
-        isPlayer = false;
-
     }
 
     private void Exploration(){
         if(configration.calIsPlayerForExploration()){
             isPlayer = true;
             target = configration.getTarget();
+        }else {
+            stopFlag = true;
         }
     }
 
